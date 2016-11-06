@@ -13,13 +13,19 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
   
   @IBOutlet weak var nameTextField: UITextField!
   @IBOutlet weak var recordButton: UIButton!
+  @IBOutlet weak var playButton: UIButton!
+  @IBOutlet weak var addButton: UIButton!
+  
   var audioRecoder : AVAudioRecorder?
+  var audioPlayer : AVAudioPlayer?
+  var audioURL : URL?
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
     nameTextField.delegate = self
     setupRecoder()
+    playButton.isEnabled = false
   }
   
   func setupRecoder() {
@@ -35,7 +41,7 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
       
       let basePath : String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first! // возвращает 1ый элемент массива
       let pathComponents = [basePath, "audio.m4a"] // можно попробовать и с mp3
-      let audioURL = NSURL.fileURL(withPathComponents: pathComponents)!
+      audioURL = NSURL.fileURL(withPathComponents: pathComponents)!
       
       // создание настроек для audio recoder
       
@@ -46,7 +52,7 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
       
       
       // создание объекта AudioRecoder
-      audioRecoder = try AVAudioRecorder(url: audioURL, settings: audioSettings)
+      audioRecoder = try AVAudioRecorder(url: audioURL!, settings: audioSettings)
       audioRecoder!.prepareToRecord()
       
     } catch let error as NSError{
@@ -72,6 +78,7 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
       
       // Поменять тайтл кнопки на Записать
       recordButton.setTitle("Записать", for: .normal)
+      playButton.isEnabled = true
       
     } else {
       
@@ -86,6 +93,12 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
   
   @IBAction func playButtonTapped(_ sender: Any) {
     
+    do {
+   try audioPlayer = AVAudioPlayer(contentsOf: audioURL!)
+      audioPlayer!.play()
+    } catch let error as NSError {
+    print(error.localizedDescription)
+    }
   }
   
   @IBAction func addButtonTapped(_ sender: Any) {
