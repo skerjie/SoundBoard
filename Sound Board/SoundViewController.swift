@@ -26,6 +26,7 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
     nameTextField.delegate = self
     setupRecoder()
     playButton.isEnabled = false
+    addButton.isEnabled = false
   }
   
   func setupRecoder() {
@@ -79,6 +80,7 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
       // Поменять тайтл кнопки на Записать
       recordButton.setTitle("Записать", for: .normal)
       playButton.isEnabled = true
+      addButton.isEnabled = true
       
     } else {
       
@@ -103,6 +105,13 @@ class SoundViewController: UIViewController, UITextFieldDelegate {
   
   @IBAction func addButtonTapped(_ sender: Any) {
     
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let sound = Sound(context: context)
+    sound.name = nameTextField.text
+    sound.audio = NSData(contentsOf: audioURL!)
+    (UIApplication.shared.delegate as! AppDelegate).saveContext()
+    
+    navigationController!.popViewController(animated: true)
   }
   
   
